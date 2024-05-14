@@ -30,6 +30,11 @@ clean-test:
 	rm -fr .pytest_cache
 	rm -f coverage.xml
 
+## remove sms artifacts
+clean-sms:
+	find inbox -name '*.json' -exec rm -f {} +
+	find outbox -name '*.json' -exec rm -f {} +
+
 ## fix with ruff
 format:
 	poetry run ruff check --select I . --fix
