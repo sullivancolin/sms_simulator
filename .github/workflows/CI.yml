@@ -31,12 +31,12 @@ jobs:
 
       - name: Verify formatting
         run: |
-          poetry run ruff . --select I
+          poetry run ruff check . --select I
           poetry run ruff format --check .
 
       - name: Lint
         run: |
-          poetry run ruff . --exit-zero
+          poetry run ruff check . --exit-zero
           poetry run mypy --install-types --non-interactive .
           poetry run mypy --html-report=mypy_report .
 
