@@ -11,7 +11,7 @@ numbers = list(range(0, 9))
 
 
 def random_phone_number() -> int:
-    return int(str("".join((str(num) for num in random.choices(numbers)), k=10)))
+    return int(str("".join(str(num) for num in random.choices(numbers, k=10))))
 
 
 def random_message() -> str:
