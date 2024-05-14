@@ -7,15 +7,15 @@ from uuid import uuid4
 
 from sms_simulator.models import SMS
 
+numbers = list(range(0, 9))
+
 
 def random_phone_number() -> int:
-    return int(
-        str("".join(str(num) for num in random.choices(list(range(0, 9)), k=10)))
-    )
+    return int(str("".join((str(num) for num in random.choices(numbers)), k=10)))
 
 
 def random_message() -> str:
-    return "".join(random.choices(string.ascii_letters, k=random.randint(10, 100)))
+    return "".join(random.choices(string.ascii_letters, k=random.randint(1, 100)))
 
 
 def get_n_messages(n: int = 1000) -> list[SMS]:

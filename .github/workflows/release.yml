@@ -109,8 +109,3 @@ jobs:
       - name: Publish docs to github pages
         run: |
           cd docs/; poetry run mkdocs gh-deploy --force
-
-      - name: Publish to Internal Pypi on artifactory
-        run: |
-          poetry config repositories.artifactory_internal https://artifactory.brandwatch.com/artifactory/api/pypi/pypi-internal/
-          poetry publish -r artifactory_internal -u ${{ secrets.ARTIFACTORY_USER }} -p ${{ secrets.ARTIFACTORY_KEY }}
