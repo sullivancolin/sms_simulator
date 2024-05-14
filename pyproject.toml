@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "sms-simulator"
+version = "0.1.0"
+description = "An SMS Service Simulator"
+authors = ["Colin Sullivan <csullivan@brandwatch.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.scripts]
+sms = 'sms_simulator.cli:app'
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^1.26.4"
+watchfiles = "^0.21.0"
+typer = "^0.12.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^5.0.0"
+mypy = {extras = ["reports"], version = "^1.10.0"}
+ruff = "^0.4.4"
+pre-commit = "^3.7.1"
+mkdocs-material = "^9.5.22"
+mkdocstrings = {extras = ["python"], version = "^0.25.1"}
+pytest-html = "^4.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+
+[tool.coverage.html]
+show_contexts = true
+
+[tool.coverage.report]
+fail_under = 90
+
+[tool.coverage.run]
+parallel = true
+dynamic_context = "test_function"
+source = ["sms_simulator"]
+
+[tool.coverage.paths]
+source = [
+    "src/sms_simulator",
+    "*/sms_simulator",
+    "*\\sms_simulator",
+]
+
+[tool.ruff]
+exclude = ["docs"]
+lint.ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+]
+line-length = 88
+lint.select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+    "UP",  # pyupgrade
+    "RUF100" # enforce that your noqa directives are "valid"
+]
+target-version = "py311"
+
+[tool.ruff.lint.isort]
+known-first-party = ["sms_simulator"]

@@ -1,0 +1,116 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+jobs:
+  draft-release:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Draft Release
+    runs-on: ubuntu-latest
+    outputs:
+      build_assets: ${{ steps.check-version.outputs.tag }}
+      upload_url: ${{ steps.update-release.outputs.upload_url }}
+    steps:
+      - name: Install poetry
+        run: |
+          pipx install poetry
+
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use 3.11
+          poetry install
+
+      - name: Detect and tag new version
+        id: check-version
+        uses: salsify/action-detect-and-tag-new-version@v2.0.3
+        with:
+          version-command: |
+            bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
+
+      - name: Publish the release notes
+        id: update-release
+        uses: release-drafter/release-drafter@v5.21.1
+        with:
+          publish: ${{ steps.check-version.outputs.tag != '' }}
+          tag: ${{ steps.check-version.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-release-assets:
+    name: Build Release Assets
+    runs-on: ubuntu-latest
+    needs: draft-release
+    if: ${{ needs.draft-release.outputs.build_assets  != '' }}
+    steps:
+      - name: Install poetry
+        run: |
+          pipx install poetry
+
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use 3.11
+          poetry install
+
+      - name: Build Distribution
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+          python -m build .
+
+      - name: Upload Distribution Assets
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.draft-release.outputs.upload_url }}
+          asset_path: dist/*
+
+      - name: Build Documentation
+        run: |
+          make docs
+          zip -r docs.zip docs/site
+
+      - name: Upload Documentation Assets
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.draft-release.outputs.upload_url }}
+          asset_path: docs.zip
+
+      - name: Publish docs to github pages
+        run: |
+          cd docs/; poetry run mkdocs gh-deploy --force
+
+      - name: Publish to Internal Pypi on artifactory
+        run: |
+          poetry config repositories.artifactory_internal https://artifactory.brandwatch.com/artifactory/api/pypi/pypi-internal/
+          poetry publish -r artifactory_internal -u ${{ secrets.ARTIFACTORY_USER }} -p ${{ secrets.ARTIFACTORY_KEY }}

@@ -1,0 +1,53 @@
+site_name: sms_simulator
+site_description: CLI interface for the sms service simulator.
+repo_url: https://github.com/sullivancolin/sms_simulator
+repo_name: sms_simulator
+
+edit_uri: ""
+nav:
+  - Getting Started: index.md
+  - CLI: CLI.md
+
+theme:
+  name: "material"
+  font:
+    text: "Roboto"
+    code: "Fira Code"
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            annotations_path: source
+            show_signature_annotations: true
+            separate_signature: true
+            members_order: source
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - admonition
+  - markdown.extensions.toc:
+      permalink: true
+      toc_depth: 3
+
+# extra_css:
+#   - "stylesheets/extra.css"
+#   - "stylesheets/termynal.css"
+#   - "stylesheets/custom.css"
+# extra_javascript:
+#   - "js/termynal.js"
+#   - "js/custom.js"
