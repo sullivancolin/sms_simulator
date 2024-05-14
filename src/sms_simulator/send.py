@@ -24,7 +24,7 @@ def send_sms_messages(
                 status = SMSStatus.FAILED
             else:
                 status = SMSStatus.SUCCESS
-            latency = max(0, random.gauss(latency_mean, latency_mean / 2))
+            latency = int(max(0, random.gauss(latency_mean, latency_mean / 2)))
             time.sleep(latency / 1000)
             result = SMSResult(sms.phone_number, sms.message, status, latency)
             with open(destination / Path(name).name, "w") as f:
