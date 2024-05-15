@@ -5,7 +5,7 @@ from typing import Annotated
 import typer
 
 from sms_simulator import __version__
-from sms_simulator.generate import dump_messages, get_n_messages
+from sms_simulator.generate import enqueue_messages, get_n_messages
 from sms_simulator.monitor import monitor_results
 from sms_simulator.send import send_sms_messages
 
@@ -43,15 +43,12 @@ def generate(
 ) -> None:
     """Generate SMS messages."""
     messages = get_n_messages(n)
-    dump_messages(messages, Path(target_dir))
+    enqueue_messages(messages, Path(target_dir))
     typer.echo(f"Generated {n} messages at {target_dir}.")
 
 
 @app.command()
 def send(
-    source_dir: Annotated[
-        str, typer.Argument(help="directory to watch for new messagse to send")
-    ] = "inbox",
     dest_dir: Annotated[
         str, typer.Argument(help="directory to write success/failre messages")
     ] = "outbox",
@@ -66,8 +63,8 @@ def send(
     ] = 0.1,
 ) -> None:
     """Send SMS messages."""
+    typer.echo(f"Createing {num_workers} SMS workers.")
     send_sms_messages(
-        Path(source_dir),
         Path(dest_dir),
         num_workers,
         latency_mean,
