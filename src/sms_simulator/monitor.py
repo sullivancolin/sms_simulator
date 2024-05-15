@@ -10,7 +10,7 @@ from sms_simulator.models import AddedFile, SMSResult, SMSStatus
 
 
 def generate_table(
-    row_data: tuple[str, str, str] = (
+    row_data: tuple[str, str, str, str, str, str] = (
         "0",
         "0",
         "[red]0",
@@ -60,7 +60,7 @@ def monitor_results(source_dir: Path, interval: int) -> None:
                     f"{sent_count}",
                     f"[red]{failed_count}",
                     f"[red]{failed_count / sent_count:.2f} errs/sent",
-                    f"{batch_count / (datetime.now() - start_time).total_seconds():.2f} messages/second",
+                    f"{batch_count / (datetime.now() - start_time ).total_seconds():.2f} messages/second",
                     f"{latencies/sent_count} ms/msg",
                 )
             live.update(generate_table(row_data))

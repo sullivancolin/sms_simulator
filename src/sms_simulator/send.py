@@ -64,7 +64,7 @@ def send_sms_messages(
         },
     )
     actors = [
-        SMSWorker.options(
+        SMSWorker.options(  # type: ignore
             name=f"Actor ID: {num}", namespace="sms", lifetime="detached"
         ).remote(inbox, destination, latency_mean, failure_rate)
         for num in range(num_workers)
