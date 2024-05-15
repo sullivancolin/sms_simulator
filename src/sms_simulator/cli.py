@@ -42,9 +42,9 @@ def generate(
     ] = "inbox",
 ) -> None:
     """Generate SMS messages."""
+    typer.echo(f"Generating {n} messages at {target_dir}.")
     messages = get_n_messages(n)
     enqueue_messages(messages, Path(target_dir))
-    typer.echo(f"Generated {n} messages at {target_dir}.")
 
 
 @app.command()
@@ -57,7 +57,7 @@ def send(
     ] = cpu_count() - 1,
     latency_mean: Annotated[
         int, typer.Option(help="Mean latency in milliseconds.")
-    ] = 250,
+    ] = 50,
     failure_rate: Annotated[
         float, typer.Option(help="Rate of failure in sending messages.")
     ] = 0.1,
@@ -77,7 +77,9 @@ def monitor(
     target_dir: Annotated[
         str, typer.Argument(help="directory to watch for sms results")
     ] = "outbox",
-    interval: Annotated[int, typer.Option(help="Interval in seconds.")] = 1,
+    interval: Annotated[
+        float, typer.Option(help="Refresh Metrics Interval in seconds.")
+    ] = 1.0,
 ) -> None:
     """Monitor SMS progress."""
     monitor_results(Path(target_dir), interval=interval)
