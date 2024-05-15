@@ -1,11 +1,13 @@
 import json
 import random
 import string
+from collections.abc import Iterable
 from dataclasses import asdict
 from pathlib import Path
 from uuid import uuid4
 
 from sms_simulator.models import SMS
+from sms_simulator.send import Queue
 
 numbers = list(range(0, 9))
 
@@ -18,22 +20,28 @@ def random_message() -> str:
     return "".join(random.choices(string.ascii_letters, k=random.randint(1, 100)))
 
 
-def get_n_messages(n: int = 1000) -> list[SMS]:
-    return [
+def get_n_messages(n: int = 1000) -> Iterable[SMS]:
+    return (
         SMS(
             random_phone_number(),
             random_message(),
         )
         for _ in range(n)
-    ]
+    )
 
 
-def dump_messages(messages: list[SMS], path: Path) -> None:
+def enqueue_messages(messages: Iterable[SMS], path: Path) -> None:
+    inbox = Queue(
+        maxsize=1000,
+        actor_options={
+            "name": "inbox",
+            "namespace": "sms",
+            "lifetime": "detached",
+            "get_if_exists": True,
+        },
+    )
     for message in messages:
-        with open(path / (uuid4().hex + ".json"), "w") as f:
+        filename = path / (uuid4().hex + ".json")
+        with open(filename, "w") as f:
             json.dump(asdict(message), f)
-
-
-if __name__ == "__main__":
-    messages = get_n_messages(10)
-    print(messages)
+        inbox.put(filename)
