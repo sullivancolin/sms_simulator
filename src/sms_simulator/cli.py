@@ -1,3 +1,5 @@
+"""CLI interface for the sms service simulator."""
+
 from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Annotated
@@ -7,12 +9,13 @@ import typer
 from sms_simulator import __version__
 from sms_simulator.generate import enqueue_messages, get_n_messages
 from sms_simulator.monitor import monitor_results
-from sms_simulator.send import send_sms_messages
+from sms_simulator.send import spawn_sms_senders
 
 app = typer.Typer(help="CLI interface for the sms service simulator.")
 
 
 def version_callback(value: bool) -> None:
+    """Print the version and exit."""
     if value:
         print(f"{__version__}")
         raise typer.Exit()
@@ -29,6 +32,7 @@ def main(
         is_eager=True,
     ),
 ) -> None:
+    """CLI interface for the sms service simulator."""
     return
 
 
@@ -41,14 +45,14 @@ def generate(
         str, typer.Option(help="Directory to write messages.")
     ] = "inbox",
 ) -> None:
-    """Generate SMS messages."""
+    """Generate N SMS messages and add them to the queue."""
     typer.echo(f"Generating {n} messages at {target_dir}.")
     messages = get_n_messages(n)
     enqueue_messages(messages, Path(target_dir))
 
 
 @app.command()
-def send(
+def spawn_senders(
     dest_dir: Annotated[
         str, typer.Argument(help="directory to write success/failre messages")
     ] = "outbox",
@@ -64,7 +68,7 @@ def send(
 ) -> None:
     """Send SMS messages."""
     typer.echo(f"Createing {num_workers} SMS workers.")
-    send_sms_messages(
+    spawn_sms_senders(
         Path(dest_dir),
         num_workers,
         latency_mean,
@@ -83,7 +87,3 @@ def monitor(
 ) -> None:
     """Monitor SMS progress."""
     monitor_results(Path(target_dir), interval=interval)
-
-
-if __name__ == "__main__":
-    app()

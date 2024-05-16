@@ -13,7 +13,7 @@ sms = 'sms_simulator.cli:app'
 python = "^3.11"
 watchfiles = "^0.21.0"
 typer = "^0.12.3"
-ray = {version = "2.10", extras = ["default"]}
+ray = { version = "2.10", extras = ["default"] }
 
 
 [tool.poetry.group.dev.dependencies]
@@ -36,7 +36,10 @@ disallow_untyped_defs = true
 
 [tool.coverage.html]
 show_contexts = true
+show_missing = true
 
+[tool.coverage.report]
+fail_under = 70
 
 [tool.coverage.run]
 parallel = true
