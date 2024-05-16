@@ -19,7 +19,7 @@ def send_message(
         status = SMSStatus.FAILED
     else:
         status = SMSStatus.SUCCESS
-    latency = int(max(0, random.gauss(latency, latency / 2)))
+    latency = int(max(0, random.gauss(latency)))
     time.sleep(latency / 1000)
     result = SMSResult(sms.phone_number, sms.message, status, latency)
     with open(target_dir / Path(source_path).name, "w") as f:
@@ -65,7 +65,10 @@ def send_sms_messages(
     )
     actors = [
         SMSWorker.options(  # type: ignore
-            name=f"Actor ID: {num}", namespace="sms", lifetime="detached"
+            name=f"Actor ID: {num}",
+            namespace="sms",
+            lifetime="detached",
+            get_if_exists=True,
         ).remote(inbox, destination, latency_mean, failure_rate)
         for num in range(num_workers)
     ]
