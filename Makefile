@@ -45,11 +45,11 @@ lint:
 	poetry run ruff check . --exit-zero --fix
 	poetry run mypy .
 
-## run tests with the default Python
+## run tests
 test:
 	poetry run pytest
 
-## run tests with coverage
+## run tests with coverage report
 coverage:
 	poetry run coverage run -m pytest
 	poetry run coverage combine
@@ -64,7 +64,7 @@ test-reports:
 
 	@echo "Open reports htmlcov/index.html, test_report.html, mypy_report/index.html in your browser"
 
-## run typer-cli to build the cli markdown docs
+## run typer to build the cli markdown docs
 cli-docs:
 	poetry run typer sms_simulator.cli utils docs --name sms  > docs/docs/CLI.md
 
@@ -72,7 +72,7 @@ cli-docs:
 docs: docs-clean cli-docs
 	cd docs/; poetry run mkdocs build
 
-## serve docs
+## serve docs locally
 serve-docs: docs-clean cli-docs
 	cd docs/; poetry run mkdocs serve --watch ../src/sms_simulator
 
@@ -87,6 +87,14 @@ dist: clean
 ## install the package and all development dependencies to the poetry virtualenv
 install-all: clean
 	poetry install
+
+## start ray head node
+start-ray:
+	poetry run ray start --head
+
+## stop ray head node
+stop-ray:
+	poetry run ray stop
 
 ##############################################################################
 # Self Documenting Commands                                                  #

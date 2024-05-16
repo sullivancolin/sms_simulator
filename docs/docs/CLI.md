@@ -17,22 +17,27 @@ $ sms [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `generate`: Generate SMS messages.
+* `generate`: Generate N SMS messages and add them to...
 * `monitor`: Monitor SMS progress.
-* `send`: Send SMS messages.
+* `spawn-senders`: Send SMS messages.
 
 ## `sms generate`
 
-Generate SMS messages.
+Generate N SMS messages and add them to the queue.
 
 **Usage**:
 
 ```console
-$ sms generate [OPTIONS]
+$ sms generate [OPTIONS] [N]
 ```
+
+**Arguments**:
+
+* `[N]`: Number of sms messages to generate.  [default: 1000]
 
 **Options**:
 
+* `--target-dir TEXT`: Directory to write messages.  [default: inbox]
 * `--help`: Show this message and exit.
 
 ## `sms monitor`
@@ -42,24 +47,36 @@ Monitor SMS progress.
 **Usage**:
 
 ```console
-$ sms monitor [OPTIONS]
+$ sms monitor [OPTIONS] [TARGET_DIR]
 ```
+
+**Arguments**:
+
+* `[TARGET_DIR]`: directory to watch for sms results  [default: outbox]
 
 **Options**:
 
+* `--interval FLOAT`: Refresh Metrics Interval in seconds.  [default: 1.0]
 * `--help`: Show this message and exit.
 
-## `sms send`
+## `sms spawn-senders`
 
 Send SMS messages.
 
 **Usage**:
 
 ```console
-$ sms send [OPTIONS]
+$ sms spawn-senders [OPTIONS] [DEST_DIR]
 ```
+
+**Arguments**:
+
+* `[DEST_DIR]`: directory to write success/failre messages  [default: outbox]
 
 **Options**:
 
+* `--num-workers INTEGER`: Number of workers to send messages.  [default: 9]
+* `--latency-mean INTEGER`: Mean latency in milliseconds.  [default: 50]
+* `--failure-rate FLOAT`: Rate of failure in sending messages.  [default: 0.1]
 * `--help`: Show this message and exit.
 

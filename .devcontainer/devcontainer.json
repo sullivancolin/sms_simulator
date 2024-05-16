@@ -11,6 +11,7 @@
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
+    "onCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "poetry install && poetry run pre-commit install && poetry run sms --help",
     "customizations": {

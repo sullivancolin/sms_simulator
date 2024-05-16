@@ -14,3 +14,6 @@ def test_cli_help(cli_runner: CliRunner) -> None:
     """Test cli help text."""
     result = cli_runner.invoke(app, ["--help"])
     assert "CLI interface for the sms service simulator." in result.output
+    assert "spawn-senders" in result.output
+    assert "generate" in result.output
+    assert "monitor" in result.output

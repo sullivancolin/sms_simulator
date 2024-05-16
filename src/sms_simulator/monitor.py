@@ -1,3 +1,5 @@
+"""Monitor the metrics of the SMS Senders and message queue."""
+
 import json
 from dataclasses import dataclass
 from datetime import datetime
@@ -12,12 +14,25 @@ from sms_simulator.models import SMSResult, SMSStatus
 
 
 class AddedFile(DefaultFilter):
+    """Watch Filter for files that have been added."""
+
     def __call__(self, change: Change, path: str) -> bool:
+        """Check if the change is an added file.
+
+        Args:
+            change: The type of change.
+            path: The path of the file.
+
+        Returns:
+            True if the change is an added file, False otherwise.
+        """
         return super().__call__(change, path) and change == Change.added
 
 
 @dataclass()
 class RowData:
+    """Data class representing the metrics of the SMS Senders and message queue."""
+
     refresh_count: int = 0
     queue_size: int = 0
     sent_count: int = 0
@@ -27,6 +42,7 @@ class RowData:
     latencies: float = 0.0
 
     def to_table_row(self) -> tuple[str, str, str, str, str, str, str]:
+        """Convert the data to a table row tuple."""
         return (
             f"{self.refresh_count}",
             f"{self.queue_size}",
@@ -39,6 +55,14 @@ class RowData:
 
 
 def generate_table(row_data: RowData = RowData()) -> Table:
+    """Generate a table from the row data.
+
+    Args:
+        row_data: The row data to generate the table from.
+
+    Returns:
+        A rich Table object.
+    """
     table = Table()
     table.add_column("Number of Refreshes")
     table.add_column("Queue Size")
@@ -52,6 +76,15 @@ def generate_table(row_data: RowData = RowData()) -> Table:
 
 
 def monitor_results(source_dir: Path, interval: float) -> None:
+    """Monitor the metrics of the SMS Sender processes and message queue.
+
+    Args:
+        source_dir: The directory to watch for SMS results.
+        interval: The refresh interval in seconds.
+
+    Returns:
+        None
+    """
     prev_time = None
     queue = Queue(
         maxsize=1000,

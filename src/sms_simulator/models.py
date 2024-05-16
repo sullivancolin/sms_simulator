@@ -1,27 +1,32 @@
+"""Module defining the data models used in the SMS simulator."""
+
 from dataclasses import dataclass
 from enum import Enum
 
-from watchfiles import Change, DefaultFilter
-
-
-class AddedFile(DefaultFilter):
-    def __call__(self, change: Change, path: str) -> bool:
-        return super().__call__(change, path) and change == Change.added
-
 
 class SMSStatus(str, Enum):
+    """Enum of possible SMS statuses.
+
+    `SMSStatus.SUCCESS`: The SMS was successfully sent.
+    `SMSStatusFAILED`: The SMS failed to send.
+    """
+
     SUCCESS = "success"
     FAILED = "failed"
 
 
 @dataclass(frozen=True, slots=True)
 class SMS:
+    """Data class representing an SMS message."""
+
     phone_number: int
     message: str
 
 
 @dataclass(frozen=True, slots=True)
 class SMSResult:
+    """Data class representing the result of sending an SMS message."""
+
     phone_number: int
     message: str
     status: SMSStatus
