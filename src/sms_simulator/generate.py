@@ -20,7 +20,7 @@ def random_phone_number() -> int:
     Returns:
         A random phone number as an integer.
     """
-    return int(str("".join(str(num) for num in random.choices(numbers, k=10))))
+    return int("1" + "".join(str(num) for num in random.choices(numbers, k=9)))
 
 
 def random_message() -> str:
