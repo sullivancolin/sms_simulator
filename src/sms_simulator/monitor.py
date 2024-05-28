@@ -96,9 +96,18 @@ def monitor_results(source_dir: Path, interval: float) -> None:
         },
     )
     row_data = RowData(0, queue.qsize(), 0, 0, 0.0, 0.0, 0.0)
-    with Live(generate_table(row_data), refresh_per_second=interval) as live:
+    if interval <= 1:
+        refresh_per_second = 1 / interval
+        print(refresh_per_second)
+    else:
+        refresh_per_second = interval
+    with Live(generate_table(row_data), refresh_per_second=refresh_per_second) as live:
         for changes in watch(
-            str(source_dir), watch_filter=AddedFile(), step=int(interval * 1000)
+            str(source_dir),
+            watch_filter=AddedFile(),
+            step=int(interval * 1000),
+            rust_timeout=int(interval * 1000),
+            yield_on_timeout=True,
         ):
             start_time = prev_time if prev_time else datetime.now()
             batch_count = 0
