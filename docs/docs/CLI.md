@@ -20,6 +20,7 @@ $ sms [OPTIONS] COMMAND [ARGS]...
 * `generate`: Generate N SMS messages and add them to...
 * `monitor`: Monitor SMS progress.
 * `spawn-senders`: Send SMS messages.
+* `tui`: Run the Terminal User Interface
 
 ## `sms generate`
 
@@ -78,5 +79,19 @@ $ sms spawn-senders [OPTIONS] [DEST_DIR]
 * `--num-workers INTEGER`: Number of workers to send messages.  [default: 9]
 * `--latency-mean INTEGER`: Mean latency in milliseconds.  [default: 50]
 * `--failure-rate FLOAT`: Rate of failure in sending messages.  [default: 0.1]
+* `--help`: Show this message and exit.
+
+## `sms tui`
+
+Run the Terminal User Interface
+
+**Usage**:
+
+```console
+$ sms tui [OPTIONS]
+```
+
+**Options**:
+
 * `--help`: Show this message and exit.
 

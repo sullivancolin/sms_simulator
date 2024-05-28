@@ -4,14 +4,25 @@ from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Annotated
 
+import ray
 import typer
+from ray import serve
+from trogon import Trogon
+from typer.main import get_group
 
 from sms_simulator import __version__
 from sms_simulator.generate import enqueue_messages, get_n_messages
 from sms_simulator.monitor import monitor_results
 from sms_simulator.send import spawn_sms_senders
+from sms_simulator.serve_send import spawn_sms_serve_deployment
 
 app = typer.Typer(help="CLI interface for the sms service simulator.")
+
+
+@app.command()
+def tui(ctx: typer.Context) -> None:
+    """Run the Terminal User Interface"""
+    Trogon(get_group(app), click_context=ctx).run()
 
 
 def version_callback(value: bool) -> None:
@@ -74,6 +85,38 @@ def spawn_senders(
         latency_mean,
         failure_rate,
     )
+
+
+@app.command()
+def serve_senders(
+    dest_dir: Annotated[
+        str, typer.Argument(help="directory to write success/failre messages")
+    ] = "outbox",
+    num_workers: Annotated[
+        int, typer.Option(help="Number of workers to send messages.")
+    ] = cpu_count() - 1,
+    latency_mean: Annotated[
+        int, typer.Option(help="Mean latency in milliseconds.")
+    ] = 50,
+    failure_rate: Annotated[
+        float, typer.Option(help="Rate of failure in sending messages.")
+    ] = 0.1,
+) -> None:
+    """Send SMS messages."""
+    typer.echo(f"Createing {num_workers} SMS workers.")
+    ray.init(address="auto")
+    spawn_sms_serve_deployment(
+        Path(dest_dir),
+        num_workers,
+        latency_mean,
+        failure_rate,
+    )
+
+
+@app.command()
+def halt_serve_senders() -> None:
+    """Stop the Ray Serve senders."""
+    serve.delete("sms_deployment")
 
 
 @app.command()

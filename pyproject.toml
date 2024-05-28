@@ -13,7 +13,8 @@ sms = 'sms_simulator.cli:app'
 python = "^3.11"
 watchfiles = "^0.21.0"
 typer = "^0.12.3"
-ray = { version = "2.10", extras = ["default"] }
+ray = {version = "2.10.0", extras = ["default", "serve"]}
+trogon = "^0.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
